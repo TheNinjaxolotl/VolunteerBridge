@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VolunteerBridge — Connect. Serve. Grow.</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sage: #4a7c59;
+    --sage-light: #c8dece;
+    --sage-dark: #2d4f38;
+    --gold: #c9a84c;
+    --gold-light: #f5edcf;
+    --cream: #faf8f3;
+    --ink: #1a1a2e;
+    --ink-soft: #3d3d56;
+    --muted: #7a7a99;
+    --white: #ffffff;
+    --border: rgba(26,26,46,0.1);
+    --shadow: 0 4px 24px rgba(26,26,46,0.08);
+    --error: #c0392b;
+    --error-light: #fdecea;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,243,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--sage-dark);
+    letter-spacing: -0.5px;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a {
+    color: var(--ink-soft); font-size: 14px; font-weight: 400;
+    text-decoration: none; letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--sage-dark); }
+  .nav-signin-link {
+    font-size: 14px !important; font-weight: 500 !important;
+    color: var(--sage-dark) !important;
+    border: 1.5px solid rgba(45,79,56,0.3) !important;
+    padding: 7px 18px; border-radius: 100px;
+    transition: border-color 0.2s, background 0.2s !important;
+  }
+  .nav-signin-link:hover {
+    border-color: var(--sage-dark) !important;
+    background: rgba(45,79,56,0.05);
+    color: var(--sage-dark) !important;
+  }
+  .nav-cta {
+    background: var(--sage-dark); color: var(--white) !important;
+    padding: 8px 20px; border-radius: 100px;
+    font-weight: 500 !important; font-size: 14px !important;
+    transition: background 0.2s !important;
+    cursor: pointer;
+  }
+  .nav-cta:hover { background: var(--sage) !important; }
+
+  /* Nav user state */
+  .nav-user {
+    display: none; align-items: center; gap: 12px;
+  }
+  .nav-user.visible { display: flex; }
+  .nav-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .nav-avatar:hover { opacity: 0.8; }
+  .nav-avatar.volunteer { background: var(--sage-light); color: var(--sage-dark); }
+  .nav-avatar.org { background: var(--gold-light); color: #7a5c1a; }
+  .nav-username { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .nav-signout {
+    font-size: 13px; color: var(--muted); cursor: pointer;
+    background: none; border: none; font-family: 'DM Sans', sans-serif;
+    padding: 0; transition: color 0.2s;
+  }
+  .nav-signout:hover { color: var(--ink); }
+  .nav-dashboard-btn {
+    font-size: 13px; font-weight: 500; color: var(--sage-dark);
+    background: var(--sage-light); border: none; border-radius: 100px;
+    padding: 7px 16px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .nav-dashboard-btn:hover { background: #b2d0ba; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 88vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 80px 5% 60px;
+    gap: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -120px; right: -80px;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(74,124,89,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold-light); border: 1px solid rgba(201,168,76,0.3);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.8px;
+    text-transform: uppercase; color: #7a5c1a;
+    margin-bottom: 24px;
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px; background: var(--gold);
+    border-radius: 50%; animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(42px, 5vw, 68px);
+    font-weight: 600; line-height: 1.05;
+    letter-spacing: -2px;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .hero h1 em {
+    font-style: italic; font-weight: 300;
+    color: var(--sage);
+  }
+  .hero-sub {
+    font-size: 17px; color: var(--ink-soft); font-weight: 300;
+    max-width: 460px; line-height: 1.7;
+    margin-bottom: 36px;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--sage-dark); color: var(--white);
+    padding: 14px 28px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--sage); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: var(--ink);
+    padding: 14px 28px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 400;
+    text-decoration: none; border: 1.5px solid var(--border);
+    cursor: pointer; transition: border-color 0.2s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--sage); transform: translateY(-1px); }
+  .hero-stats {
+    display: flex; gap: 36px; margin-top: 48px;
+    padding-top: 36px; border-top: 1px solid var(--border);
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 32px; font-weight: 600; color: var(--sage-dark);
+    line-height: 1;
+  }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; letter-spacing: 0.3px; }
+
+  /* Hero right */
+  .hero-visual { position: relative; height: 440px; }
+  .float-card {
+    position: absolute;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 22px;
+    box-shadow: var(--shadow);
+  }
+  .float-card.card-a { top: 0; left: 0; width: 280px; animation: floatA 5s ease-in-out infinite; }
+  .float-card.card-b { top: 160px; right: 0; width: 260px; animation: floatB 6s ease-in-out infinite; }
+  .float-card.card-c { bottom: 0; left: 40px; width: 240px; animation: floatA 7s ease-in-out infinite reverse; }
+  @keyframes floatA { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+  @keyframes floatB { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(8px); } }
+  .card-org { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .org-avatar {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; flex-shrink: 0;
+  }
+  .org-avatar.green { background: var(--sage-light); color: var(--sage-dark); font-family: 'Fraunces', serif; }
+  .org-avatar.gold { background: var(--gold-light); color: #7a5c1a; font-family: 'Fraunces', serif; }
+  .org-avatar.blue { background: #e0edf8; color: #1e4d7a; font-family: 'Fraunces', serif; }
+  .card-org-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .card-org-type { font-size: 11px; color: var(--muted); }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+  .card-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 3px 10px; border-radius: 100px; font-weight: 500; }
+  .tag-sage { background: var(--sage-light); color: var(--sage-dark); }
+  .tag-gold { background: var(--gold-light); color: #7a5c1a; }
+  .tag-blue { background: #e0edf8; color: #1e4d7a; }
+  .match-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #edfaf2; color: #1e6b3c;
+    font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 100px;
+    margin-top: 8px;
+  }
+  .match-dot { width: 6px; height: 6px; background: #2ecc71; border-radius: 50%; }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 96px 5%; }
+  .section-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 600; letter-spacing: -1.5px;
+    line-height: 1.1; color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--sage); }
+  .section-sub {
+    font-size: 16px; color: var(--ink-soft); font-weight: 300;
+    max-width: 520px; line-height: 1.7;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { background: var(--white); }
+  .how-header { text-align: center; margin-bottom: 64px; }
+  .how-header .section-sub { margin: 0 auto; }
+  .how-tabs {
+    display: flex; justify-content: center; gap: 8px;
+    margin-bottom: 56px;
+    background: var(--cream); border-radius: 100px;
+    padding: 6px; max-width: 360px; margin-left: auto; margin-right: auto;
+  }
+  .how-tab {
+    padding: 10px 24px; border-radius: 100px;
+    font-size: 14px; font-weight: 400; cursor: pointer;
+    border: none; background: transparent; color: var(--muted);
+    transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+  }
+  .how-tab.active { background: var(--white); color: var(--ink); font-weight: 500; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .how-steps { display: none; }
+  .how-steps.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .step-card { padding: 32px 28px; border: 1px solid var(--border); border-radius: 20px; background: var(--cream); }
+  .step-num { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 600; color: var(--sage-light); line-height: 1; margin-bottom: 16px; }
+  .step-title { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
+  .step-desc { font-size: 14px; color: var(--ink-soft); font-weight: 300; line-height: 1.6; }
+
+  /* ── OPPORTUNITIES ── */
+  .opps-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+  .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
+  .filter-btn {
+    padding: 8px 18px; border-radius: 100px;
+    font-size: 13px; font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border); background: var(--white);
+    color: var(--ink-soft); cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn.active, .filter-btn:hover { background: var(--sage-dark); color: var(--white); border-color: var(--sage-dark); }
+  .opp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .opp-card {
+    background: var(--white); border-radius: 16px;
+    border: 1px solid var(--border); padding: 24px;
+    transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+  }
+  .opp-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,26,46,0.1); }
+  .opp-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .opp-org { display: flex; align-items: center; gap: 10px; }
+  .opp-org-avatar {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600;
+  }
+  .opp-org-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .opp-org-loc { font-size: 11px; color: var(--muted); }
+  .hours-badge { font-size: 12px; font-weight: 500; background: var(--sage-light); color: var(--sage-dark); padding: 4px 10px; border-radius: 100px; white-space: nowrap; }
+  .opp-title { font-size: 16px; font-weight: 500; margin-bottom: 8px; }
+  .opp-desc { font-size: 13px; color: var(--ink-soft); font-weight: 300; line-height: 1.5; margin-bottom: 14px; }
+  .opp-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* ── IMPACT ── */
+  .impact-section { background: var(--sage-dark); padding: 80px 5%; }
+  .impact-section .section-title, .impact-section .section-sub, .impact-section .section-label { color: rgba(255,255,255,0.9); }
+  .impact-section .section-sub { color: rgba(255,255,255,0.65); }
+  .impact-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 56px; }
+  .impact-num-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 40px 28px; text-align: center; }
+  .impact-num-card:first-child { border-radius: 16px 0 0 16px; }
+  .impact-num-card:last-child { border-radius: 0 16px 16px 0; }
+  .impact-big { font-family: 'Fraunces', serif; font-size: 52px; font-weight: 600; color: var(--white); line-height: 1; }
+  .impact-big span { color: var(--gold); }
+  .impact-label { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 8px; }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials-section { background: var(--cream); }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 48px; }
+  .testi-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  .testi-quote { font-family: 'Fraunces', serif; font-size: 28px; color: var(--sage-light); line-height: 0.5; margin-bottom: 12px; }
+  .testi-text { font-size: 14px; color: var(--ink-soft); line-height: 1.6; font-weight: 300; margin-bottom: 20px; }
+  .testi-author { display: flex; align-items: center; gap: 10px; }
+  .testi-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; }
+  .testi-name { font-size: 13px; font-weight: 500; }
+  .testi-role { font-size: 11px; color: var(--muted); }
+
+  /* ── CATEGORIES ── */
+  .categories-section { background: var(--white); }
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px; }
+  .cat-card { border: 1px solid var(--border); border-radius: 16px; padding: 28px 22px; cursor: pointer; transition: all 0.2s; }
+  .cat-card:hover { border-color: var(--sage); transform: translateY(-2px); }
+  .cat-icon { font-size: 28px; margin-bottom: 14px; }
+  .cat-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .cat-count { font-size: 12px; color: var(--muted); }
+
+  /* ── CTA ── */
+  .cta-section { background: var(--gold-light); border-top: 1px solid rgba(201,168,76,0.2); text-align: center; padding: 96px 5%; }
+  .cta-section .section-title em { color: var(--gold); }
+  .cta-actions { display: flex; gap: 14px; justify-content: center; margin-top: 32px; }
+  .btn-gold {
+    background: var(--gold); color: var(--white);
+    padding: 14px 32px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.2s, filter 0.2s; display: inline-block;
+  }
+  .btn-gold:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+  /* ── FOOTER ── */
+  footer { background: var(--ink); padding: 56px 5% 32px; color: rgba(255,255,255,0.6); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+  .footer-brand .nav-logo { color: rgba(255,255,255,0.9); display: block; margin-bottom: 12px; }
+  .footer-tagline { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.45); }
+  .footer-col h4 { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.8); margin-bottom: 16px; letter-spacing: 0.3px; }
+  .footer-col a { display: block; font-size: 13px; color: rgba(255,255,255,0.45); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
+  .footer-col a:hover { color: rgba(255,255,255,0.8); }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+
+  /* ═══════════════════════════════════════════
+     AUTH MODAL — completely rebuilt
+  ═══════════════════════════════════════════ */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(26,26,46,0.6);
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .auth-modal {
+    background: var(--white); border-radius: 28px;
+    width: 92%; max-width: 880px;
+    min-height: 540px;
+    display: flex; overflow: hidden;
+    position: relative;
+    box-shadow: 0 32px 80px rgba(26,26,46,0.22);
+    animation: slideUp 0.32s cubic-bezier(0.22,1,0.36,1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(28px) scale(0.97); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+
+  /* Left panel */
+  .auth-sidebar {
+    width: 280px; flex-shrink: 0;
+    background: var(--sage-dark);
+    padding: 40px 32px;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    transition: background 0.4s;
+  }
+  .auth-sidebar.org-mode { background: #5a3e1b; }
+  .auth-sidebar::before {
+    content: '';
+    position: absolute; bottom: -60px; right: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    pointer-events: none;
+  }
+  .auth-sidebar::after {
+    content: '';
+    position: absolute; top: -40px; left: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    pointer-events: none;
+  }
+  .sidebar-logo {
+    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600;
+    color: rgba(255,255,255,0.9); margin-bottom: 40px; letter-spacing: -0.3px;
+  }
+  .sidebar-logo span { color: var(--gold); }
+  .sidebar-heading {
+    font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600;
+    color: var(--white); line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.5px;
+  }
+  .sidebar-sub {
+    font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6; margin-bottom: 36px;
+  }
+  .sidebar-role-toggle {
+    display: flex; flex-direction: column; gap: 8px; margin-top: auto;
+  }
+  .sidebar-role-btn {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1);
+    cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 400;
+  }
+  .sidebar-role-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.9); }
+  .sidebar-role-btn.active {
+    background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.35);
+    color: var(--white); font-weight: 500;
+  }
+  .sidebar-role-icon { font-size: 18px; line-height: 1; }
+  .sidebar-role-text { display: flex; flex-direction: column; gap: 1px; }
+  .sidebar-role-name { font-size: 13px; font-weight: 500; line-height: 1.2; }
+  .sidebar-role-desc { font-size: 11px; opacity: 0.6; }
+  .sidebar-check {
+    margin-left: auto; width: 18px; height: 18px; border-radius: 50%;
+    background: var(--gold); display: none; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--white); flex-shrink: 0;
+  }
+  .sidebar-role-btn.active .sidebar-check { display: flex; }
+
+  /* Right panel */
+  .auth-main {
+    flex: 1; padding: 40px 44px;
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .auth-close {
+    position: absolute; top: 18px; right: 18px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--cream); border: 1px solid var(--border);
+    cursor: pointer; font-size: 14px; color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; z-index: 10;
+  }
+  .auth-close:hover { background: var(--border); color: var(--ink); }
+
+  /* Tab bar */
+  .auth-tabs {
+    display: flex; gap: 0; margin-bottom: 28px;
+    border-bottom: 2px solid var(--border);
+  }
+  .auth-tab {
+    padding: 10px 22px 12px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; background: none; border: none; cursor: pointer;
+    color: var(--muted); position: relative; transition: color 0.2s;
+  }
+  .auth-tab.active { color: var(--sage-dark); font-weight: 500; }
+  .auth-tab.active::after {
+    content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+    height: 2px; background: var(--sage-dark);
+  }
+
+  /* Form */
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block; font-size: 12px; font-weight: 500;
+    margin-bottom: 5px; color: var(--ink-soft); letter-spacing: 0.2px;
+  }
+  .form-group input, .form-group select {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
+    background: var(--cream); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--sage); box-shadow: 0 0 0 3px rgba(74,124,89,0.12);
+  }
+  .form-group input.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(192,57,43,0.1); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .field-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .field-error { font-size: 11px; color: var(--error); margin-top: 4px; display: none; }
+  .field-error.visible { display: block; }
+
+  .password-wrap { position: relative; }
+  .password-wrap input { padding-right: 42px; }
+  .pw-toggle {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 13px; padding: 0; transition: color 0.2s;
+  }
+  .pw-toggle:hover { color: var(--ink); }
+
+  .password-strength { margin-top: 6px; }
+  .strength-bar { height: 3px; border-radius: 2px; background: var(--border); overflow: hidden; }
+  .strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0%; }
+  .strength-label { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 18px 0; font-size: 12px; color: var(--muted);
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .auth-submit {
+    width: 100%; padding: 12px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    background: var(--sage-dark); color: var(--white); border: none;
+    cursor: pointer; transition: background 0.2s, transform 0.15s;
+    margin-top: 6px; position: relative;
+  }
+  .auth-submit:hover { background: var(--sage); transform: translateY(-1px); }
+  .auth-submit.org-mode { background: #7a5c1a; }
+  .auth-submit.org-mode:hover { background: #9a7025; }
+  .auth-submit.loading { opacity: 0.7; pointer-events: none; }
+
+  .auth-footer-note {
+    font-size: 12px; color: var(--muted); text-align: center; margin-top: 14px;
+    line-height: 1.6;
+  }
+  .auth-footer-note a { color: var(--sage-dark); cursor: pointer; }
+
+  .alert-box {
+    padding: 10px 14px; border-radius: 10px;
+    font-size: 13px; margin-bottom: 14px; display: none;
+    align-items: flex-start; gap: 8px;
+  }
+  .alert-box.error { background: var(--error-light); color: var(--error); border: 1px solid rgba(192,57,43,0.2); display: flex; }
+  .alert-box.success { background: #edfaf2; color: #1e6b3c; border: 1px solid rgba(30,107,60,0.2); display: flex; }
+
+  /* Success state */
+  .auth-success {
+    display: none; text-align: center; padding: 24px 0;
+    flex-direction: column; align-items: center;
+  }
+  .auth-success.visible { display: flex; }
+  .success-icon { font-size: 52px; margin-bottom: 16px; }
+  .success-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; margin-bottom: 8px; color: var(--ink); }
+  .success-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 300px; margin: 0 auto 24px; }
+  .success-cta { font-size: 13px; color: var(--sage-dark); cursor: pointer; font-weight: 500; }
+
+  /* ── DASHBOARD ── */
+  .dashboard-page {
+    display: none; min-height: 100vh; background: var(--cream);
+  }
+  .dashboard-page.visible { display: block; }
+  .main-site { display: block; }
+  .main-site.hidden { display: none; }
+
+  .dash-nav {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 5%; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .dash-nav-logo { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--sage-dark); }
+  .dash-nav-logo span { color: var(--gold); }
+  .dash-nav-right { display: flex; align-items: center; gap: 16px; }
+  .dash-nav-user { display: flex; align-items: center; gap: 10px; }
+  .dash-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600;
+  }
+  .dash-avatar.volunteer { background: var(--sage-light); color: var(--sage-dark); }
+  .dash-avatar.org { background: var(--gold-light); color: #7a5c1a; }
+  .dash-username { font-size: 14px; font-weight: 500; }
+  .dash-role-pill {
+    font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 100px;
+  }
+  .dash-role-pill.volunteer { background: var(--sage-light); color: var(--sage-dark); }
+  .dash-role-pill.org { background: var(--gold-light); color: #7a5c1a; }
+  .dash-signout-btn {
+    font-size: 13px; color: var(--muted); background: none; border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 14px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .dash-signout-btn:hover { color: var(--ink); border-color: rgba(26,26,46,0.25); }
+
+  .dash-body { padding: 48px 5%; }
+  .dash-welcome { margin-bottom: 36px; }
+  .dash-welcome-greeting { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 600; letter-spacing: -1px; margin-bottom: 4px; }
+  .dash-welcome-greeting em { font-style: italic; font-weight: 300; color: var(--sage); }
+  .dash-welcome-sub { font-size: 15px; color: var(--muted); }
+
+  .dash-stats { display: flex; gap: 16px; margin-bottom: 40px; flex-wrap: wrap; }
+  .dash-stat {
+    background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+    padding: 20px 28px; min-width: 140px;
+  }
+  .dash-stat-num { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; color: var(--sage-dark); line-height: 1; }
+  .dash-stat-lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .dash-section-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; margin-bottom: 16px; letter-spacing: -0.5px; }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; margin-bottom: 40px; }
+
+  .dash-opp-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 20px;
+    transition: box-shadow 0.2s;
+  }
+  .dash-opp-card:hover { box-shadow: var(--shadow); }
+  .dash-opp-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .dash-opp-org { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .dash-opp-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .status-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 100px; }
+  .status-pending { background: #fff8e1; color: #7a5c1a; }
+  .status-confirmed { background: #edfaf2; color: #1e6b3c; }
+  .status-completed { background: var(--sage-light); color: var(--sage-dark); }
+
+  .dash-action-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .dash-action-btn {
+    padding: 11px 22px; border-radius: 10px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+    border: 1.5px solid var(--border); background: var(--white); color: var(--ink);
+  }
+  .dash-action-btn.primary { background: var(--sage-dark); color: var(--white); border-color: var(--sage-dark); }
+  .dash-action-btn.primary:hover { background: var(--sage); }
+  .dash-action-btn:hover { border-color: var(--sage); }
+  .dash-action-btn.gold { background: var(--gold); color: var(--white); border-color: var(--gold); }
+  .dash-action-btn.gold:hover { filter: brightness(1.08); }
+
+  .dash-empty {
+    text-align: center; padding: 40px 20px;
+    background: var(--white); border: 1px dashed var(--border); border-radius: 14px;
+  }
+  .dash-empty-icon { font-size: 32px; margin-bottom: 10px; }
+  .dash-empty-text { font-size: 14px; color: var(--muted); }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .auth-modal { flex-direction: column; max-width: 96%; }
+    .auth-sidebar { width: 100%; padding: 24px; }
+    .sidebar-role-toggle { flex-direction: row; margin-top: 16px; }
+    .auth-main { padding: 24px; }
+    .sidebar-heading { font-size: 20px; margin-bottom: 6px; }
+    .sidebar-sub { margin-bottom: 0; }
+  }
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 48px; }
+    .hero-visual { display: none; }
+    .how-steps.active { grid-template-columns: 1fr; }
+    .impact-grid { grid-template-columns: repeat(2,1fr); }
+    .impact-num-card:nth-child(1) { border-radius: 16px 0 0 0; }
+    .impact-num-card:nth-child(2) { border-radius: 0 16px 0 0; }
+    .impact-num-card:nth-child(3) { border-radius: 0 0 0 16px; }
+    .impact-num-card:nth-child(4) { border-radius: 0 0 16px 0; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .cat-grid { grid-template-columns: repeat(2,1fr); }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════ MAIN SITE ════════════════ -->
+<div id="main-site" class="main-site">
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Volunteer<span>Bridge</span></a>
+  <div class="nav-links" id="nav-links-guest">
+    <a href="#opportunities">Browse Opportunities</a>
+    <a href="#how">How It Works</a>
+    <a href="#impact">Our Impact</a>
+    <div style="width:1px;height:20px;background:var(--border);"></div>
+    <a href="#" onclick="openAuth('volunteer','login')" class="nav-signin-link">Sign In</a>
+    <a href="#" onclick="openAuth('org','signup')" class="nav-cta">Post a Role</a>
+  </div>
+  <div class="nav-user" id="nav-user-state">
+    <div class="nav-avatar volunteer" id="nav-avatar-el"></div>
+    <span class="nav-username" id="nav-username-el"></span>
+    <button class="nav-dashboard-btn" onclick="showDashboard()">My Dashboard</button>
+    <button class="nav-signout" onclick="signOut()">Sign out</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow"><div class="dot"></div> Free for students & nonprofits</div>
+    <h1>Where students <em>grow</em> through service</h1>
+    <p class="hero-sub">VolunteerBridge connects high school students searching for volunteer hours with local organizations making real change — no fees, no barriers, just impact.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary" onclick="openAuth('volunteer','signup')">Find Opportunities</a>
+      <a href="#how" class="btn-outline">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">100+</div><div class="stat-label">Students helped</div></div>
+      <div><div class="stat-num">10+</div><div class="stat-label">Partner orgs</div></div>
+      <div><div class="stat-num">500+</div><div class="stat-label">Hours logged</div></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="float-card card-a">
+      <div class="card-org">
+        <div class="org-avatar green">GC</div>
+        <div><div class="card-org-name">Green Charlotte</div><div class="card-org-type">Environmental Nonprofit</div></div>
+      </div>
+      <div class="card-title">Trail Restoration Weekend</div>
+      <div class="card-meta"><span class="tag tag-sage">4 hrs</span><span class="tag tag-gold">Outdoor</span></div>
+      <div class="match-badge"><div class="match-dot"></div> 3 spots left</div>
+    </div>
+    <div class="float-card card-b">
+      <div class="card-org">
+        <div class="org-avatar blue">FC</div>
+        <div><div class="card-org-name">Food Connect CLT</div><div class="card-org-type">Food Bank</div></div>
+      </div>
+      <div class="card-title">Weekly Food Sorting Shift</div>
+      <div class="card-meta"><span class="tag tag-sage">3 hrs/week</span><span class="tag tag-blue">Recurring</span></div>
+    </div>
+    <div class="float-card card-c">
+      <div class="card-org">
+        <div class="org-avatar gold">LH</div>
+        <div><div class="card-org-name">Levine Children's</div><div class="card-org-type">Hospital</div></div>
+      </div>
+      <div class="card-title">Reading Hour with Kids</div>
+      <div class="card-meta"><span class="tag tag-gold">2 hrs</span><span class="tag tag-sage">Healthcare</span></div>
+      <div class="match-badge"><div class="match-dot"></div> Open now</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="how-header">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">Simple for <em>everyone</em></h2>
+    <p class="section-sub">Whether you're a student collecting hours or an organization finding dependable help — we've made it easy.</p>
+  </div>
+  <div class="how-tabs">
+    <button class="how-tab active" onclick="switchTab('student',event)">For Students</button>
+    <button class="how-tab" onclick="switchTab('org',event)">For Organizations</button>
+  </div>
+  <div class="how-steps active" id="steps-student">
+    <div class="step-card"><div class="step-num">01</div><div class="step-title">Create your profile</div><p class="step-desc">Sign up free with your school email. List your interests, skills, and availability. Takes under 3 minutes.</p></div>
+    <div class="step-card"><div class="step-num">02</div><div class="step-title">Browse & apply</div><p class="step-desc">Search by category, date, or distance. Apply to opportunities with one click — no lengthy forms.</p></div>
+    <div class="step-card"><div class="step-num">03</div><div class="step-title">Log hours & get verified</div><p class="step-desc">After each shift, your supervisor approves your hours digitally. Download your verified certificate anytime for college apps.</p></div>
+  </div>
+  <div class="how-steps" id="steps-org">
+    <div class="step-card"><div class="step-num">01</div><div class="step-title">Register your organization</div><p class="step-desc">Create a free nonprofit or business account. Verify your status — we welcome nonprofits, schools, hospitals, and mission-driven companies.</p></div>
+    <div class="step-card"><div class="step-num">02</div><div class="step-title">Post volunteer roles</div><p class="step-desc">Describe the opportunity, hours needed, and any requirements. Listings go live instantly and reach thousands of motivated students.</p></div>
+    <div class="step-card"><div class="step-num">03</div><div class="step-title">Manage & verify</div><p class="step-desc">Review applicant profiles, communicate through the platform, and digitally sign off on hours — all in one dashboard.</p></div>
+  </div>
+</section>
+
+<!-- OPPORTUNITIES -->
+<section id="opportunities">
+  <div class="opps-header">
+    <div><div class="section-label">Browse</div><h2 class="section-title">Open <em>opportunities</em></h2></div>
+    <a href="#" class="btn-outline" style="font-size:14px;">View all 240+</a>
+  </div>
+  <div class="filter-row">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Environment</button>
+    <button class="filter-btn">Education</button>
+    <button class="filter-btn">Healthcare</button>
+    <button class="filter-btn">Food & Hunger</button>
+    <button class="filter-btn">Animals</button>
+    <button class="filter-btn">Arts & Culture</button>
+    <button class="filter-btn">Seniors</button>
+  </div>
+  <div class="opp-grid">
+    <div class="opp-card">
+      <div class="opp-card-top">
+        <div class="opp-org"><div class="opp-org-avatar" style="background:#c8dece;color:#2d4f38;">GC</div><div><div class="opp-org-name">Green Charlotte</div><div class="opp-org-loc">NoDa Neighborhood</div></div></div>
+        <span class="hours-badge">4 hrs</span>
+      </div>
+      <div class="opp-title">Trail Restoration Weekend</div>
+      <div class="opp-desc">Help restore the Mallard Creek Greenway trail — raking, mulching, and planting native species with our conservation crew.</div>
+      <div class="opp-tags"><span class="tag tag-sage">Environment</span><span class="tag tag-gold">Weekend</span></div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-card-top">
+        <div class="opp-org"><div class="opp-org-avatar" style="background:#e0edf8;color:#1e4d7a;">FC</div><div><div class="opp-org-name">Food Connect CLT</div><div class="opp-org-loc">West Charlotte</div></div></div>
+        <span class="hours-badge">3 hrs</span>
+      </div>
+      <div class="opp-title">Weekly Food Sorting Shift</div>
+      <div class="opp-desc">Sort and package donated food items for families in need. Recurring Thursday evening shifts — perfect for building consistent hours.</div>
+      <div class="opp-tags"><span class="tag tag-sage">Food & Hunger</span><span class="tag" style="background:#e0edf8;color:#1e4d7a;">Recurring</span></div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-card-top">
+        <div class="opp-org"><div class="opp-org-avatar" style="background:#f5edcf;color:#7a5c1a;">LH</div><div><div class="opp-org-name">Levine Children's</div><div class="opp-org-loc">Medical District</div></div></div>
+        <span class="hours-badge">2 hrs</span>
+      </div>
+      <div class="opp-title">Reading Hour with Patients</div>
+      <div class="opp-desc">Bring comfort to young patients through storytelling sessions on pediatric wards. Training provided — caring attitude required.</div>
+      <div class="opp-tags"><span class="tag tag-gold">Healthcare</span><span class="tag tag-sage">Kids</span></div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-card-top">
+        <div class="opp-org"><div class="opp-org-avatar" style="background:#f0e8f5;color:#5c3480;">TL</div><div><div class="opp-org-name">Tutor League CLT</div><div class="opp-org-loc">Eastway Crossing</div></div></div>
+        <span class="hours-badge">2 hrs/wk</span>
+      </div>
+      <div class="opp-title">Math Tutoring for Middle Schoolers</div>
+      <div class="opp-desc">Work 1-on-1 with 6th–8th graders who need extra support in algebra and geometry. Ideal for students strong in math.</div>
+      <div class="opp-tags"><span class="tag" style="background:#f0e8f5;color:#5c3480;">Education</span><span class="tag" style="background:#e0edf8;color:#1e4d7a;">Recurring</span></div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-card-top">
+        <div class="opp-org"><div class="opp-org-avatar" style="background:#fde9e9;color:#7a1e1e;">HS</div><div><div class="opp-org-name">Humane Society CLT</div><div class="opp-org-loc">Steele Creek</div></div></div>
+        <span class="hours-badge">3 hrs</span>
+      </div>
+      <div class="opp-title">Dog Walking & Socialization</div>
+      <div class="opp-desc">Help shelter dogs stay healthy and socialized while they wait for forever homes. Saturdays and Sundays, 8am–11am.</div>
+      <div class="opp-tags"><span class="tag" style="background:#fde9e9;color:#7a1e1e;">Animals</span><span class="tag tag-gold">Weekend</span></div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-card-top">
+        <div class="opp-org"><div class="opp-org-avatar" style="background:#e6f4f1;color:#1a5c4a;">SC</div><div><div class="opp-org-name">Senior Care Partners</div><div class="opp-org-loc">Pineville</div></div></div>
+        <span class="hours-badge">1.5 hrs</span>
+      </div>
+      <div class="opp-title">Tech Help for Seniors</div>
+      <div class="opp-desc">Teach senior residents how to use smartphones, video calls, and tablets. Your digital fluency can reduce their isolation.</div>
+      <div class="opp-tags"><span class="tag" style="background:#e6f4f1;color:#1a5c4a;">Seniors</span><span class="tag" style="background:#f0e8f5;color:#5c3480;">Education</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories-section" id="categories">
+  <div class="section-label">Explore by cause</div>
+  <h2 class="section-title">Find your <em>passion</em></h2>
+  <div class="cat-grid">
+    <div class="cat-card"><div class="cat-icon">🌿</div><div class="cat-name">Environment</div><div class="cat-count">42 opportunities</div></div>
+    <div class="cat-card"><div class="cat-icon">📚</div><div class="cat-name">Education</div><div class="cat-count">58 opportunities</div></div>
+    <div class="cat-card"><div class="cat-icon">🏥</div><div class="cat-name">Healthcare</div><div class="cat-count">31 opportunities</div></div>
+    <div class="cat-card"><div class="cat-icon">🍎</div><div class="cat-name">Food & Hunger</div><div class="cat-count">27 opportunities</div></div>
+    <div class="cat-card"><div class="cat-icon">🐾</div><div class="cat-name">Animals</div><div class="cat-count">19 opportunities</div></div>
+    <div class="cat-card"><div class="cat-icon">🎨</div><div class="cat-name">Arts & Culture</div><div class="cat-count">24 opportunities</div></div>
+    <div class="cat-card"><div class="cat-icon">👴</div><div class="cat-name">Seniors</div><div class="cat-count">22 opportunities</div></div>
+    <div class="cat-card"><div class="cat-icon">🏘️</div><div class="cat-name">Community Dev</div><div class="cat-count">17 opportunities</div></div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-section" id="impact">
+  <div style="text-align:center;">
+    <div class="section-label">Our impact</div>
+    <h2 class="section-title">Changing <em>Charlotte</em> together</h2>
+    <p class="section-sub" style="margin:0 auto;">Since 2021, VolunteerBridge has been quietly building bridges between ambitious students and organizations doing remarkable work in our community.</p>
+  </div>
+  <div class="impact-grid">
+    <div class="impact-num-card"><div class="impact-big">4,<span>2</span>00<span>+</span></div><div class="impact-label">Students registered</div></div>
+    <div class="impact-num-card"><div class="impact-big">52<span>k</span></div><div class="impact-label">Volunteer hours logged</div></div>
+    <div class="impact-num-card"><div class="impact-big">380<span>+</span></div><div class="impact-label">Partner organizations</div></div>
+    <div class="impact-num-card"><div class="impact-big">96<span>%</span></div><div class="impact-label">Student satisfaction rate</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-label">Stories</div>
+  <h2 class="section-title">Real voices, <em>real change</em></h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">I logged 80 hours volunteering at a food bank and a senior center through VolunteerBridge. The verified certificates made my college applications so much stronger.</p>
+      <div class="testi-author"><div class="testi-avatar" style="background:#c8dece;color:#2d4f38;">JM</div><div><div class="testi-name">Jasmine M.</div><div class="testi-role">Student, Myers Park High School</div></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Our animal shelter needed reliable weekend help and posting on VolunteerBridge filled our spots within 48 hours. The students are enthusiastic, prepared, and the platform makes coordination effortless.</p>
+      <div class="testi-author"><div class="testi-avatar" style="background:#fde9e9;color:#7a1e1e;">DP</div><div><div class="testi-name">Dana P.</div><div class="testi-role">Volunteer Coordinator, Humane Society CLT</div></div></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-quote">"</div>
+      <p class="testi-text">Volunteering at the children's hospital changed my career path entirely. I'm now applying to pre-med programs because of those 60 hours. VolunteerBridge made that first step so accessible.</p>
+      <div class="testi-author"><div class="testi-avatar" style="background:#f5edcf;color:#7a5c1a;">RC</div><div><div class="testi-name">Rafael C.</div><div class="testi-role">Student, Providence High School</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-label">Get started</div>
+  <h2 class="section-title">Ready to make a <em>difference?</em></h2>
+  <p class="section-sub" style="margin:0 auto; text-align:center; color:var(--ink-soft);">Join thousands of students building their futures — and thousands of families they've helped along the way.</p>
+  <div class="cta-actions">
+    <a href="#" class="btn-primary" onclick="openAuth('volunteer','signup')">I'm a Student</a>
+    <a href="#" class="btn-gold" onclick="openAuth('org','signup')">I'm an Organization</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="nav-logo">Volunteer<span>Bridge</span></span>
+      <p class="footer-tagline">Connecting high school students with meaningful volunteer opportunities across the Charlotte region. Free, always.</p>
+    </div>
+    <div class="footer-col">
+      <h4>For Students</h4>
+      <a href="#">Browse opportunities</a>
+      <a href="#">Track my hours</a>
+      <a href="#">Get certified</a>
+      <a href="#">Success stories</a>
+    </div>
+    <div class="footer-col">
+      <h4>For Organizations</h4>
+      <a href="#">Post a role</a>
+      <a href="#">Manage volunteers</a>
+      <a href="#">Verify hours</a>
+      <a href="#">Partner with us</a>
+    </div>
+    <div class="footer-col">
+      <h4>About</h4>
+      <a href="#">Our mission</a>
+      <a href="#">Team</a>
+      <a href="#">Contact</a>
+      <a href="#">Privacy policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 VolunteerBridge. All rights reserved.</span>
+    <span>Made with 💚 for Charlotte, NC</span>
+  </div>
+</footer>
+
+</div><!-- /main-site -->
+
+
+<!-- ════════════════ DASHBOARD PAGE ════════════════ -->
+<div id="dashboard-page" class="dashboard-page">
+
+  <div class="dash-nav">
+    <div class="dash-nav-logo">Volunteer<span>Bridge</span></div>
+    <div class="dash-nav-right">
+      <div class="dash-nav-user">
+        <div class="dash-avatar volunteer" id="dash-avatar-el"></div>
+        <span class="dash-username" id="dash-username-el"></span>
+        <span class="dash-role-pill volunteer" id="dash-role-pill-el">Volunteer</span>
+      </div>
+      <button class="dash-signout-btn" onclick="signOut()">← Sign out</button>
+    </div>
+  </div>
+
+  <div class="dash-body">
+    <div class="dash-welcome">
+      <div class="dash-welcome-greeting" id="dash-greeting">Welcome back, <em id="dash-firstname">there</em>!</div>
+      <div class="dash-welcome-sub" id="dash-sub">Here's what's happening with your volunteering.</div>
+    </div>
+
+    <!-- Volunteer dashboard -->
+    <div id="volunteer-dash">
+      <div class="dash-stats">
+        <div class="dash-stat"><div class="dash-stat-num">0</div><div class="dash-stat-lbl">Hours logged</div></div>
+        <div class="dash-stat"><div class="dash-stat-num">0</div><div class="dash-stat-lbl">Applications</div></div>
+        <div class="dash-stat"><div class="dash-stat-num">0</div><div class="dash-stat-lbl">Certificates earned</div></div>
+      </div>
+      <div class="dash-section-title">My Applications</div>
+      <div class="dash-empty">
+        <div class="dash-empty-icon">🎒</div>
+        <div class="dash-empty-text">No applications yet — browse opportunities to get started!</div>
+      </div>
+      <br>
+      <div class="dash-action-row">
+        <button class="dash-action-btn primary" onclick="goHome()">Browse Opportunities</button>
+        <button class="dash-action-btn">View My Hours</button>
+        <button class="dash-action-btn">Download Certificate</button>
+      </div>
+    </div>
+
+    <!-- Org dashboard -->
+    <div id="org-dash" style="display:none;">
+      <div class="dash-stats">
+        <div class="dash-stat"><div class="dash-stat-num">0</div><div class="dash-stat-lbl">Active listings</div></div>
+        <div class="dash-stat"><div class="dash-stat-num">0</div><div class="dash-stat-lbl">Applications received</div></div>
+        <div class="dash-stat"><div class="dash-stat-num">0</div><div class="dash-stat-lbl">Hours verified</div></div>
+      </div>
+      <div class="dash-section-title">My Listings</div>
+      <div class="dash-empty">
+        <div class="dash-empty-icon">🏢</div>
+        <div class="dash-empty-text">No listings yet — post your first volunteer opportunity!</div>
+      </div>
+      <br>
+      <div class="dash-action-row">
+        <button class="dash-action-btn gold" onclick="goHome()">Post a New Role</button>
+        <button class="dash-action-btn">Manage Applications</button>
+        <button class="dash-action-btn">Verify Hours</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════ AUTH MODAL ════════════════ -->
+<div class="modal-overlay" id="auth-modal-overlay">
+  <div class="auth-modal" id="auth-modal">
+
+    <button class="auth-close" onclick="closeAuth()">✕</button>
+
+    <!-- Left sidebar -->
+    <div class="auth-sidebar" id="auth-sidebar">
+      <div class="sidebar-logo">Volunteer<span>Bridge</span></div>
+      <div class="sidebar-heading" id="sidebar-heading">Join as a volunteer</div>
+      <div class="sidebar-sub" id="sidebar-sub">Find meaningful opportunities and track your hours — free forever.</div>
+      <div class="sidebar-role-toggle">
+        <button class="sidebar-role-btn active" id="role-btn-volunteer" onclick="setRole('volunteer')">
+          <span class="sidebar-role-icon">🎒</span>
+          <span class="sidebar-role-text">
+            <span class="sidebar-role-name">Student / Volunteer</span>
+            <span class="sidebar-role-desc">Find & log hours</span>
+          </span>
+          <span class="sidebar-check">✓</span>
+        </button>
+        <button class="sidebar-role-btn" id="role-btn-org" onclick="setRole('org')">
+          <span class="sidebar-role-icon">🏢</span>
+          <span class="sidebar-role-text">
+            <span class="sidebar-role-name">Organization</span>
+            <span class="sidebar-role-desc">Post & manage roles</span>
+          </span>
+          <span class="sidebar-check">✓</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right main area -->
+    <div class="auth-main">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signup" onclick="switchAuthTab('signup')">Create Account</button>
+        <button class="auth-tab" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+      </div>
+
+      <!-- Signup panel -->
+      <div class="auth-panel active" id="panel-signup">
+        <div class="alert-box" id="signup-alert"></div>
+
+        <!-- Volunteer signup fields -->
+        <div id="signup-volunteer-fields">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" id="v-firstname" placeholder="Alex">
+              <div class="field-error" id="err-v-firstname">Please enter your first name.</div>
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" id="v-lastname" placeholder="Johnson">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>School Email</label>
+            <input type="email" id="v-email" placeholder="alex@school.edu">
+            <div class="field-error" id="err-v-email">Please enter a valid email.</div>
+          </div>
+          <div class="form-group">
+            <label>School Name</label>
+            <input type="text" id="v-school" placeholder="e.g. Myers Park High School">
+            <div class="field-error" id="err-v-school">Please enter your school name.</div>
+          </div>
+          <div class="form-group">
+            <label>Grade Level</label>
+            <select id="v-grade">
+              <option value="">Select grade...</option>
+              <option>Kindergarten</option>
+              <option>1st Grade</option>
+              <option>2nd Grade</option>
+              <option>3rd Grade</option>
+              <option>4th Grade</option>
+              <option>5th Grade</option>
+              <option>6th Grade</option>
+              <option>7th Grade</option>
+              <option>8th Grade</option>
+              <option>9th Grade (Freshman)</option>
+              <option>10th Grade (Sophomore)</option>
+              <option>11th Grade (Junior)</option>
+              <option>12th Grade (Senior)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Org signup fields -->
+        <div id="signup-org-fields" style="display:none;">
+          <div class="form-group">
+            <label>Organization Name</label>
+            <input type="text" id="o-orgname" placeholder="e.g. Green Charlotte">
+            <div class="field-error" id="err-o-orgname">Please enter your organization name.</div>
+          </div>
+          <div class="form-group">
+            <label>Organization Type</label>
+            <select id="o-orgtype">
+              <option value="">Select type...</option>
+              <option>Nonprofit / 501(c)(3)</option>
+              <option>Public School / University</option>
+              <option>Hospital / Healthcare</option>
+              <option>Government Agency</option>
+              <option>Mission-Driven Business</option>
+              <option>Religious Organization</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Contact First Name</label>
+              <input type="text" id="o-firstname" placeholder="Dana">
+            </div>
+            <div class="form-group">
+              <label>Contact Last Name</label>
+              <input type="text" id="o-lastname" placeholder="Peters">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Work Email</label>
+            <input type="email" id="o-email" placeholder="dana@orgname.org">
+            <div class="field-error" id="err-o-email">Please enter a valid email.</div>
+          </div>
+        </div>
+
+        <!-- Shared password field -->
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="signup-password" placeholder="Create a password" oninput="checkStrength(this.value)">
+            <button class="pw-toggle" type="button" onclick="togglePw('signup-password',this)">Show</button>
+          </div>
+          <div class="password-strength">
+            <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+            <div class="strength-label" id="strength-label"></div>
+          </div>
+          <div class="field-error" id="err-signup-password">Password must be at least 8 characters.</div>
+        </div>
+
+        <button class="auth-submit" id="signup-btn" onclick="handleSignup()">Create Account →</button>
+        <div class="auth-footer-note">Already have an account? <a onclick="switchAuthTab('login')">Sign in</a></div>
+      </div>
+
+      <!-- Login panel -->
+      <div class="auth-panel" id="panel-login">
+        <div class="alert-box" id="login-alert"></div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="your@email.com">
+          <div class="field-error" id="err-login-email">Please enter your email.</div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="login-password" placeholder="Your password">
+            <button class="pw-toggle" type="button" onclick="togglePw('login-password',this)">Show</button>
+          </div>
+          <div class="field-error" id="err-login-password">Please enter your password.</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--ink-soft);font-weight:400;">
+            <input type="checkbox" id="stay-signed-in" style="width:15px;height:15px;accent-color:var(--sage-dark);cursor:pointer;">
+            Stay signed in
+          </label>
+          <a style="font-size:12px;color:var(--sage-dark);cursor:pointer;">Forgot password?</a>
+        </div>
+        <button class="auth-submit" id="login-btn" onclick="handleLogin()">Sign In →</button>
+        <div class="auth-footer-note">Don't have an account? <a onclick="switchAuthTab('signup')">Create one free</a></div>
+      </div>
+
+      <!-- Success state -->
+      <div class="auth-success" id="auth-success">
+        <div class="success-icon" id="success-icon">🎉</div>
+        <div class="success-title" id="success-title">Welcome aboard!</div>
+        <div class="success-sub" id="success-sub">Your account has been created. Check your email to verify, then start exploring.</div>
+        <button class="btn-primary" style="width:100%;margin-bottom:12px;" onclick="goToDashboard()">Go to My Dashboard →</button>
+        <div class="success-cta" onclick="closeAuth()">Continue browsing</div>
+      </div>
+
+    </div><!-- /auth-main -->
+  </div><!-- /auth-modal -->
+</div><!-- /overlay -->
+
+<!-- ── REMEMBER ME POPUP ── -->
+<div class="modal-overlay" id="remember-overlay" style="z-index:300;">
+  <div class="overlay-card" style="max-width:400px;text-align:center;border-color:rgba(74,124,89,0.25);">
+    <div style="font-size:40px;margin-bottom:12px;">🔐</div>
+    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:8px;color:var(--ink);letter-spacing:-0.5px;" id="remember-title">Stay signed in?</div>
+    <div style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;" id="remember-sub">Keep your account active on this device so you don't have to sign in every time.</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-direction:column;">
+      <button class="btn-primary" style="width:100%;border-radius:10px;" onclick="rememberChoice(true)">Yes, keep me signed in</button>
+      <button class="btn-outline" style="width:100%;border-radius:10px;font-size:14px;" onclick="rememberChoice(false)">No thanks, just this session</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // ── STATE ──
+  let currentRole = 'volunteer';
+  let currentUser = null;
+
+  // ── STORAGE KEYS ──
+  const ACCOUNTS_KEY   = 'vb_accounts';    // localStorage — account registry
+  const SESSION_KEY    = 'vb_session';     // sessionStorage — survives refresh, clears on tab close
+  const PERSIST_KEY    = 'vb_persist';     // localStorage — set when user opts to stay signed in
+  const REMEMBER_ASKED = 'vb_asked';       // localStorage — don't ask again once answered
+
+  // ── ACCOUNTS STORE (persisted) ──
+  function loadAccounts() {
+    try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || {}; } catch(e) { return {}; }
+  }
+  function saveAccounts(accs) {
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accs));
+  }
+  // Initialise from localStorage
+  const accounts = loadAccounts();
+
+  // ── AUTH OPEN / CLOSE ──
+  function openAuth(role, tab) {
+    role = role || 'volunteer';
+    tab = tab || 'signup';
+    setRole(role);
+    switchAuthTab(tab);
+    resetAuthForms();
+    document.getElementById('auth-modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAuth() {
+    document.getElementById('auth-modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('auth-modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeAuth();
+  });
+
+  // ── ROLE SWITCHING ──
+  function setRole(role) {
+    currentRole = role;
+    const isOrg = role === 'org';
+
+    // Sidebar buttons
+    document.getElementById('role-btn-volunteer').classList.toggle('active', !isOrg);
+    document.getElementById('role-btn-org').classList.toggle('active', isOrg);
+
+    // Sidebar text & color
+    const sidebar = document.getElementById('auth-sidebar');
+    sidebar.classList.toggle('org-mode', isOrg);
+    document.getElementById('sidebar-heading').textContent = isOrg
+      ? 'Register your organization' : 'Join as a volunteer';
+    document.getElementById('sidebar-sub').textContent = isOrg
+      ? 'Post opportunities and manage volunteers — free for nonprofits.'
+      : 'Find meaningful opportunities and track your hours — free forever.';
+
+    // Signup fields
+    document.getElementById('signup-volunteer-fields').style.display = isOrg ? 'none' : 'block';
+    document.getElementById('signup-org-fields').style.display = isOrg ? 'block' : 'none';
+
+    // Submit button color
+    const btn = document.getElementById('signup-btn');
+    btn.classList.toggle('org-mode', isOrg);
+    document.getElementById('login-btn').classList.toggle('org-mode', isOrg);
+  }
+
+  // ── TAB SWITCHING ──
+  function switchAuthTab(tab) {
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('panel-signup').classList.toggle('active', tab === 'signup');
+    document.getElementById('panel-login').classList.toggle('active', tab === 'login');
+    document.getElementById('auth-success').classList.remove('visible');
+    hideAlert('signup-alert');
+    hideAlert('login-alert');
+  }
+
+  // ── PASSWORD VISIBILITY ──
+  function togglePw(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    const showing = inp.type === 'text';
+    inp.type = showing ? 'password' : 'text';
+    btn.textContent = showing ? 'Show' : 'Hide';
+  }
+
+  // ── PASSWORD STRENGTH ──
+  function checkStrength(val) {
+    const fill = document.getElementById('strength-fill');
+    const lbl = document.getElementById('strength-label');
+    if (!val) { fill.style.width = '0'; lbl.textContent = ''; return; }
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (val.length >= 12) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const levels = [
+      { w: '20%', c: '#e74c3c', t: 'Too weak' },
+      { w: '40%', c: '#e67e22', t: 'Weak' },
+      { w: '60%', c: '#f1c40f', t: 'Fair' },
+      { w: '80%', c: '#2ecc71', t: 'Strong' },
+      { w: '100%', c: '#27ae60', t: 'Very strong' },
+    ];
+    const l = levels[Math.min(score, 4)];
+    fill.style.width = l.w;
+    fill.style.background = l.c;
+    lbl.textContent = l.t;
+    lbl.style.color = l.c;
+  }
+
+  // ── VALIDATION HELPERS ──
+  function showErr(id) { document.getElementById(id).classList.add('visible'); }
+  function hideErr(id) { document.getElementById(id).classList.remove('visible'); }
+  function markError(inputId) { document.getElementById(inputId).classList.add('error'); }
+  function clearError(inputId) { document.getElementById(inputId).classList.remove('error'); }
+  function showAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'alert-box ' + type;
+  }
+  function hideAlert(id) {
+    const el = document.getElementById(id);
+    el.className = 'alert-box';
+    el.textContent = '';
+  }
+
+  function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+  // ── SIGNUP ──
+  function handleSignup() {
+    let valid = true;
+    hideAlert('signup-alert');
+
+    const password = document.getElementById('signup-password').value.trim();
+
+    if (currentRole === 'volunteer') {
+      const fname = document.getElementById('v-firstname').value.trim();
+      const email = document.getElementById('v-email').value.trim();
+      const school = document.getElementById('v-school').value;
+
+      if (!fname) { showErr('err-v-firstname'); markError('v-firstname'); valid = false; } else { hideErr('err-v-firstname'); clearError('v-firstname'); }
+      if (!isValidEmail(email)) { showErr('err-v-email'); markError('v-email'); valid = false; } else { hideErr('err-v-email'); clearError('v-email'); }
+      if (!school) { showErr('err-v-school'); markError('v-school'); valid = false; } else { hideErr('err-v-school'); clearError('v-school'); }
+      if (password.length < 8) { showErr('err-signup-password'); markError('signup-password'); valid = false; } else { hideErr('err-signup-password'); clearError('signup-password'); }
+
+      if (!valid) return;
+      if (accounts[email]) { showAlert('signup-alert','An account with this email already exists. Try signing in.','error'); return; }
+
+      const lastName = document.getElementById('v-lastname').value.trim();
+      accounts[email] = { role: 'volunteer', firstName: fname, lastName, email, school, password };
+      saveAccounts(accounts);
+      currentUser = accounts[email];
+
+    } else {
+      const orgname = document.getElementById('o-orgname').value.trim();
+      const email = document.getElementById('o-email').value.trim();
+
+      if (!orgname) { showErr('err-o-orgname'); markError('o-orgname'); valid = false; } else { hideErr('err-o-orgname'); clearError('o-orgname'); }
+      if (!isValidEmail(email)) { showErr('err-o-email'); markError('o-email'); valid = false; } else { hideErr('err-o-email'); clearError('o-email'); }
+      if (password.length < 8) { showErr('err-signup-password'); markError('signup-password'); valid = false; } else { hideErr('err-signup-password'); clearError('signup-password'); }
+
+      if (!valid) return;
+      if (accounts[email]) { showAlert('signup-alert','An account with this email already exists. Try signing in.','error'); return; }
+
+      const fname = document.getElementById('o-firstname').value.trim() || 'Admin';
+      const orgtype = document.getElementById('o-orgtype').value;
+      accounts[email] = { role: 'org', firstName: fname, orgname, orgtype, email, password };
+      saveAccounts(accounts);
+      currentUser = accounts[email];
+    }
+
+    // Show loading briefly
+    const btn = document.getElementById('signup-btn');
+    btn.classList.add('loading'); btn.textContent = 'Creating account…';
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.textContent = 'Create Account →';
+      // Always write a session so refresh keeps them logged in during this session
+      sessionStorage.setItem(SESSION_KEY, currentUser.email);
+      showSuccessState();
+      // Show the remember-me popup after a short delay (unless already answered)
+      if (!localStorage.getItem(REMEMBER_ASKED)) {
+        setTimeout(showRememberPopup, 900);
+      }
+    }, 900);
+  }
+
+  // ── LOGIN ──
+  function handleLogin() {
+    let valid = true;
+    hideAlert('login-alert');
+
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!isValidEmail(email)) { showErr('err-login-email'); markError('login-email'); valid = false; } else { hideErr('err-login-email'); clearError('login-email'); }
+    if (!password) { showErr('err-login-password'); markError('login-password'); valid = false; } else { hideErr('err-login-password'); clearError('login-password'); }
+
+    if (!valid) return;
+
+    const btn = document.getElementById('login-btn');
+    btn.classList.add('loading'); btn.textContent = 'Signing in…';
+
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.textContent = 'Sign In →';
+
+      const found = accounts[email];
+      if (!found) { showAlert('login-alert', 'No account found with this email. Try creating one.', 'error'); return; }
+      if (found.password !== password) { showAlert('login-alert', 'Incorrect password. Please try again.', 'error'); return; }
+
+      if (found.role !== currentRole) setRole(found.role);
+      currentUser = found;
+
+      // Always write session (refresh-safe)
+      sessionStorage.setItem(SESSION_KEY, currentUser.email);
+
+      // If "Stay signed in" is checked, write to localStorage immediately
+      const stayChecked = document.getElementById('stay-signed-in').checked;
+      if (stayChecked) {
+        localStorage.setItem(PERSIST_KEY, currentUser.email);
+        localStorage.setItem(REMEMBER_ASKED, '1');
+      }
+
+      showSuccessState(true);
+
+      // Show remember popup if not already answered and checkbox wasn't used
+      if (!stayChecked && !localStorage.getItem(REMEMBER_ASKED)) {
+        setTimeout(showRememberPopup, 900);
+      }
+    }, 700);
+  }
+
+  // ── SUCCESS STATE ──
+  function showSuccessState(isLogin) {
+    document.getElementById('panel-signup').classList.remove('active');
+    document.getElementById('panel-login').classList.remove('active');
+    const s = document.getElementById('auth-success');
+    s.classList.add('visible');
+
+    const isOrg = currentUser.role === 'org';
+    document.getElementById('success-icon').textContent = isLogin ? '👋' : (isOrg ? '🏢' : '🎉');
+    document.getElementById('success-title').textContent = isLogin
+      ? `Welcome back, ${currentUser.firstName}!`
+      : `Welcome aboard, ${currentUser.firstName}!`;
+    document.getElementById('success-sub').textContent = isLogin
+      ? `You're signed in${isOrg ? ' as ' + currentUser.orgname : ''}. Ready to ${isOrg ? 'manage your listings' : 'find opportunities'}?`
+      : `Your account is ready. ${isOrg ? 'Start posting volunteer opportunities for your organization.' : 'Check your email to verify, then explore opportunities near you.'}`;
+
+    updateNavUser();
+  }
+
+  // ── DASHBOARD ──
+  function goToDashboard() {
+    closeAuth();
+    showDashboard();
+  }
+
+  function showDashboard() {
+    if (!currentUser) { openAuth('volunteer','login'); return; }
+    document.getElementById('main-site').classList.add('hidden');
+    const dp = document.getElementById('dashboard-page');
+    dp.classList.add('visible');
+
+    const isOrg = currentUser.role === 'org';
+    const name = isOrg ? currentUser.orgname : currentUser.firstName;
+    const initials = isOrg
+      ? (currentUser.orgname || 'O').substring(0,2).toUpperCase()
+      : ((currentUser.firstName||'?')[0] + (currentUser.lastName||'?')[0]).toUpperCase();
+
+    const avatarEl = document.getElementById('dash-avatar-el');
+    avatarEl.textContent = initials;
+    avatarEl.className = 'dash-avatar ' + (isOrg ? 'org' : 'volunteer');
+
+    document.getElementById('dash-username-el').textContent = name;
+
+    const pill = document.getElementById('dash-role-pill-el');
+    pill.textContent = isOrg ? 'Organization' : 'Volunteer';
+    pill.className = 'dash-role-pill ' + (isOrg ? 'org' : 'volunteer');
+
+    document.getElementById('dash-firstname').textContent = isOrg ? currentUser.orgname : currentUser.firstName;
+    document.getElementById('dash-sub').textContent = isOrg
+      ? 'Manage your listings, review applications, and verify hours.'
+      : "Here's what's happening with your volunteering.";
+
+    document.getElementById('volunteer-dash').style.display = isOrg ? 'none' : 'block';
+    document.getElementById('org-dash').style.display = isOrg ? 'block' : 'none';
+
+    window.scrollTo(0,0);
+  }
+
+  function goHome() {
+    document.getElementById('dashboard-page').classList.remove('visible');
+    document.getElementById('main-site').classList.remove('hidden');
+    window.scrollTo(0,0);
+  }
+
+  // ── SIGN OUT ──
+  function signOut() {
+    currentUser = null;
+    sessionStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(PERSIST_KEY);
+    // Keep REMEMBER_ASKED so we don't ask again
+    goHome();
+    updateNavUser();
+  }
+
+  // ── REMEMBER ME POPUP ──
+  function showRememberPopup() {
+    const overlay = document.getElementById('remember-overlay');
+    overlay.style.display = 'flex';
+  }
+  function rememberChoice(yes) {
+    document.getElementById('remember-overlay').style.display = 'none';
+    localStorage.setItem(REMEMBER_ASKED, '1');
+    if (yes && currentUser) {
+      localStorage.setItem(PERSIST_KEY, currentUser.email);
+    }
+  }
+
+  // ── RESTORE SESSION ON PAGE LOAD ──
+  (function restoreSession() {
+    const accs = loadAccounts();
+    // Check persistent login first (localStorage), then session (sessionStorage)
+    const persistEmail = localStorage.getItem(PERSIST_KEY);
+    const sessionEmail = sessionStorage.getItem(SESSION_KEY);
+    const email = persistEmail || sessionEmail;
+    if (email && accs[email]) {
+      currentUser = accs[email];
+      updateNavUser();
+    }
+  })();
+
+  // ── NAV USER STATE ──
+  function updateNavUser() {
+    const guestLinks = document.getElementById('nav-links-guest');
+    const userState = document.getElementById('nav-user-state');
+    if (currentUser) {
+      guestLinks.style.display = 'none';
+      userState.classList.add('visible');
+      const isOrg = currentUser.role === 'org';
+      const initials = isOrg
+        ? (currentUser.orgname||'O').substring(0,2).toUpperCase()
+        : ((currentUser.firstName||'?')[0]+(currentUser.lastName||'?')[0]).toUpperCase();
+      const avatarEl = document.getElementById('nav-avatar-el');
+      avatarEl.textContent = initials;
+      avatarEl.className = 'nav-avatar ' + (isOrg ? 'org' : 'volunteer');
+      document.getElementById('nav-username-el').textContent = isOrg ? currentUser.orgname : currentUser.firstName;
+    } else {
+      guestLinks.style.display = '';
+      userState.classList.remove('visible');
+    }
+  }
+
+  // ── RESET FORMS ──
+  function resetAuthForms() {
+    ['v-firstname','v-lastname','v-email','v-school','signup-password','login-email','login-password','o-orgname','o-email','o-firstname','o-lastname'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.value = ''; el.classList.remove('error'); }
+    });
+    ['v-grade','o-orgtype'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.value = ''; el.classList.remove('error'); }
+    });
+    document.querySelectorAll('.field-error').forEach(el => el.classList.remove('visible'));
+    hideAlert('signup-alert');
+    hideAlert('login-alert');
+    document.getElementById('auth-success').classList.remove('visible');
+    document.getElementById('panel-signup').classList.add('active');
+    document.getElementById('panel-login').classList.remove('active');
+    document.getElementById('strength-fill').style.width = '0';
+    document.getElementById('strength-label').textContent = '';
+    ['signup-btn','login-btn'].forEach(id => {
+      const b = document.getElementById(id);
+      if(b) b.classList.remove('loading');
+    });
+    document.getElementById('signup-btn').textContent = 'Create Account →';
+    document.getElementById('login-btn').textContent = 'Sign In →';
+  }
+
+  // ── HOW IT WORKS TABS ──
+  function switchTab(role, e) {
+    document.querySelectorAll('.how-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.how-steps').forEach(s => s.classList.remove('active'));
+    if (e && e.target) e.target.classList.add('active');
+    document.getElementById('steps-' + role).classList.add('active');
+  }
+
+  // ── FILTER BUTTONS ──
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
